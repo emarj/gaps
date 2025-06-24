@@ -37,6 +37,8 @@ class GeneticAlgorithm(object):
         best_fitness_score = float("-inf")
         termination_counter = 0
 
+        fittest_list = []
+
         for generation in range(self._generations):
             print_progress(
                 generation, self._generations - 1, prefix="=== Solving puzzle: "
@@ -59,6 +61,7 @@ class GeneticAlgorithm(object):
                 new_population.append(child)
 
             fittest = self._best_individual()
+            fittest_list.append(fittest)
 
             if fittest.fitness <= best_fitness_score:
                 termination_counter += 1
@@ -72,7 +75,7 @@ class GeneticAlgorithm(object):
                         self.TERMINATION_THRESHOLD
                     )
                 )
-                return fittest
+                return fittest, fittest_list
 
             self._population = new_population
 
@@ -82,7 +85,7 @@ class GeneticAlgorithm(object):
                     "Generation: {} / {}".format(generation + 1, self._generations),
                 )
 
-        return fittest
+        return fittest, fittest_list
 
     def _get_elite_individuals(self, elites):
         """Returns first 'elite_count' fittest individuals from population"""

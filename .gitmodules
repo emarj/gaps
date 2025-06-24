@@ -1,0 +1,3 @@
+[submodule "sem_consistency"]
+	path = sem_consistency
+	url = https://github.com/emarj/sem_consistency.git

@@ -1,34 +1,38 @@
-[tool.poetry]
+[project]
 name = "gaps"
-version = "0.1.0"
+version = "0.1.1"
 description = "Genetic Algorithm based solver for jigsaw puzzles with piece size auto-detection."
-authors = ["Nemanja Milicevic <the.nemanja.milicevic@gmail.com>"]
-license = "MIT"
+authors = [{ name = "Nemanja Milicevic", email = "the.nemanja.milicevic@gmail.com" }]
+requires-python = "~=3.8"
 readme = "README.md"
-homepage = "https://github.com/nemanja-m/gaps"
-repository = "https://github.com/nemanja-m/gaps"
+license = "MIT"
+dependencies = [
+    "pillow>=10.2.0,<11",
+    "numpy==1.24",
+    "matplotlib>=3.7.2,<4",
+    "opencv-python>=4.8.0.74,<5",
+    "click>=8.1.6,<9",
+]
 
-  [tool.poetry.scripts]
-  gaps = "gaps.cli:cli"
+[project.urls]
+Homepage = "https://github.com/nemanja-m/gaps"
+Repository = "https://github.com/nemanja-m/gaps"
 
-  [tool.poetry.dependencies]
-  python = "^3.8"
-  pillow = "^10.2.0"
-  numpy = "1.24"
-  matplotlib = "^3.7.2"
-  opencv-python = "^4.8.0.74"
-  click = "^8.1.6"
+[project.scripts]
+gaps = "gaps.cli:cli"
 
-  [tool.poetry.group.dev.dependencies]
-  pytest = "^7.4.0"
-  ruff = "^0.0.282"
-  black = "^24.3.0"
-  mypy = "^1.4.1"
-  pylint = "^2.17.5"
+[dependency-groups]
+dev = [
+    "pytest>=7.4.0,<8",
+    "ruff>=0.0.282,<0.0.283",
+    "black>=24.3.0,<25",
+    "mypy>=1.4.1,<2",
+    "pylint>=2.17.5,<3",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.pytest.ini_options]
 addopts = "-ra -v --disable-warnings"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"

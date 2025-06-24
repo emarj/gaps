@@ -1,6 +1,7 @@
 import click
 import cv2 as cv
 import numpy as np
+import os
 
 from gaps import utils
 from gaps.genetic_algorithm import GeneticAlgorithm
@@ -42,7 +43,6 @@ def _validate_positive_integer(_context: click.Context, _param: str, value: int)
 
 @click.command()
 @click.argument("puzzle", type=click.Path(exists=True, readable=True))
-@click.argument("solution", type=click.Path(dir_okay=False, writable=True))
 @click.option(
     "-s",
     "--size",
@@ -77,7 +77,6 @@ def _validate_positive_integer(_context: click.Context, _param: str, value: int)
 )
 def run(
     puzzle: str,
-    solution: str,
     size: int,
     generations: int,
     population: int,
@@ -91,19 +90,27 @@ def run(
 
     Examples:
 
-    $ gaps run puzzle.jpg solution.jpg --size=32 --generations=100 --population=1000
+    $ gaps run puzzle.jpg --size=32 --generations=100 --population=1000
 
     """
 
     input_puzzle = cv.imread(puzzle)
+    puzzle_name = os.path.splitext(os.path.basename(puzzle))[0]
 
     if size is None:
         detector = SizeDetector(input_puzzle)
         size = detector.detect()
 
+    
+
     click.echo(f"Population: {population}")
     click.echo(f"Generations: {generations}")
     click.echo(f"Piece size: {size}")
+
+    solution_basename = f'{puzzle_name}_p{population}_g{generations}_s{size}'
+    solution_path = os.path.join("solutions",solution_basename)
+
+    os.makedirs(solution_path,exist_ok=True)
 
     ga = GeneticAlgorithm(
         image=input_puzzle,
@@ -111,10 +118,15 @@ def run(
         population_size=population,
         generations=generations,
     )
-    result = ga.start_evolution(debug)
+
+    result, fittest_list = ga.start_evolution(debug)
     output_image = result.to_image()
 
-    cv.imwrite(solution, output_image)
+    cv.imwrite(os.path.join(solution_path,solution_basename + '_solution.jpg'), output_image)
+
+    for i,f in enumerate(fittest_list):
+        img = f.to_image()
+        cv.imwrite(os.path.join(solution_path,solution_basename + f'_{i}.jpg'), img)
 
     click.echo("Puzzle solved")
 

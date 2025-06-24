@@ -50,3 +50,7 @@ ENV/
 
 # Rope
 .ropeproject/
+
+solutions
+
+.DS_Store
