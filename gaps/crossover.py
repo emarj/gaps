@@ -16,6 +16,8 @@ class Crossover(object):
         self._child_rows = first_parent.rows
         self._child_columns = first_parent.columns
 
+        self.fitness_type = first_parent.fitness_type
+
         # Borders of growing kernel
         self._min_row = 0
         self._max_row = 0
@@ -37,7 +39,7 @@ class Crossover(object):
             )
             pieces[index] = self._parents[0].piece_by_id(piece)
 
-        return Individual(pieces, self._child_rows, self._child_columns, shuffle=False)
+        return Individual(pieces, self._child_rows, self._child_columns, shuffle=False,fitness_type = self.fitness_type)
 
     def run(self):
         self._initialize_kernel()

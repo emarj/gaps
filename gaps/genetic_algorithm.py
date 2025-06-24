@@ -5,7 +5,7 @@ from operator import attrgetter
 from gaps import utils
 from gaps.crossover import Crossover
 from gaps.image_analysis import ImageAnalysis
-from gaps.individual import Individual
+from gaps.individual import Individual, FitnessType
 from gaps.plot import Plot
 from gaps.progress_bar import print_progress
 from gaps.selection import roulette_selection
@@ -14,14 +14,14 @@ from gaps.selection import roulette_selection
 class GeneticAlgorithm(object):
     TERMINATION_THRESHOLD = 10
 
-    def __init__(self, image, piece_size, population_size, generations, elite_size=2):
+    def __init__(self, image, piece_size, population_size, generations, elite_size=2, fitness_type=FitnessType.Similarity):
         self._image = image
         self._piece_size = piece_size
         self._generations = generations
         self._elite_size = elite_size
         pieces, rows, columns = utils.flatten_image(image, piece_size, indexed=True)
         self._population = [
-            Individual(pieces, rows, columns) for _ in range(population_size)
+            Individual(pieces, rows, columns,fitness_type=fitness_type) for _ in range(population_size)
         ]
         self._pieces = pieces
 

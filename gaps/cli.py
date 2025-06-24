@@ -6,6 +6,7 @@ import os
 from gaps import utils
 from gaps.genetic_algorithm import GeneticAlgorithm
 from gaps.size_detector import SizeDetector
+from gaps.individual import FitnessType
 
 DEFAULT_GENERATIONS: int = 20
 DEFAULT_POPULATION: int = 200
@@ -117,6 +118,7 @@ def run(
         piece_size=size,
         population_size=population,
         generations=generations,
+        fitness_type=FitnessType.Semantic,
     )
 
     result, fittest_list = ga.start_evolution(debug)
