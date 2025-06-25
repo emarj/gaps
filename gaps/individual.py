@@ -11,6 +11,7 @@ from enum import Enum
 class FitnessType(Enum):
     Similarity = 1
     Semantic = 2
+    Sum = 3
 
 class Individual(object):
     """Class representing possible solution to puzzle.
@@ -65,36 +66,42 @@ class Individual(object):
         """
         if self._fitness is None:
             if self.fitness_type == FitnessType.Similarity:
-                fitness_value = 1 / self.FITNESS_FACTOR
-                # For each two adjacent pieces in rows
-                for i in range(self.rows):
-                    for j in range(self.columns - 1):
-                        ids = (self[i][j].id, self[i][j + 1].id)
-                        fitness_value += ImageAnalysis.get_dissimilarity(
-                            ids, orientation="LR"
-                        )
-                # For each two adjacent pieces in columns
-                for i in range(self.rows - 1):
-                    for j in range(self.columns):
-                        ids = (self[i][j].id, self[i + 1][j].id)
-                        fitness_value += ImageAnalysis.get_dissimilarity(
-                            ids, orientation="TD"
-                        )
-
-                self._fitness = self.FITNESS_FACTOR / fitness_value
-                
+                self._fitness =  self._similarity()
             elif self.fitness_type == FitnessType.Semantic:
                 self._fitness =  self._semantic_consistency()
+            elif self.fitness_type == FitnessType.Sum:
+                self._fitness =  self._similarity() + self._semantic_consistency()
             else:
                 raise NotImplementedError(f'Fitness type {self.fitness_type} not implemented')
         
-        print(f'Fitness: {self._fitness}')
+        #print(f'Fitness: {self._fitness}')
 
         return self._fitness
     
+    def _similarity(self) -> float:
+
+        fitness_value = 1 / self.FITNESS_FACTOR
+        # For each two adjacent pieces in rows
+        for i in range(self.rows):
+            for j in range(self.columns - 1):
+                ids = (self[i][j].id, self[i][j + 1].id)
+                fitness_value += ImageAnalysis.get_dissimilarity(
+                    ids, orientation="LR"
+                )
+        # For each two adjacent pieces in columns
+        for i in range(self.rows - 1):
+            for j in range(self.columns):
+                ids = (self[i][j].id, self[i + 1][j].id)
+                fitness_value += ImageAnalysis.get_dissimilarity(
+                    ids, orientation="TD"
+                )
+
+        return self.FITNESS_FACTOR / fitness_value
+
+
     def _semantic_consistency(self) -> float:
         image = self.to_image()
-        return compute_sem_consistency(image,(self.rows,self.columns))
+        return compute_sem_consistency(image,(self.rows,self.columns)) * 10
 
     def piece_size(self):
         """Returns single piece size"""

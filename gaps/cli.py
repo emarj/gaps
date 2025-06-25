@@ -69,6 +69,13 @@ def _validate_positive_integer(_context: click.Context, _param: str, value: int)
     help="The size of the initial population for genetic algorithm.",
 )
 @click.option(
+    "-ft",
+    "--fitness_type",
+    type=int,
+    show_default=True,
+    default=1,
+)
+@click.option(
     "-d",
     "--debug",
     type=bool,
@@ -81,6 +88,7 @@ def run(
     size: int,
     generations: int,
     population: int,
+    fitness_type : int,
     debug: bool,
 ) -> None:
     """Run puzzle solver.
@@ -108,7 +116,7 @@ def run(
     click.echo(f"Generations: {generations}")
     click.echo(f"Piece size: {size}")
 
-    solution_basename = f'{puzzle_name}_p{population}_g{generations}_s{size}'
+    solution_basename = f'{puzzle_name}_p{population}_g{generations}_s{size}_ft{fitness_type}'
     solution_path = os.path.join("solutions",solution_basename)
 
     os.makedirs(solution_path,exist_ok=True)
@@ -118,7 +126,7 @@ def run(
         piece_size=size,
         population_size=population,
         generations=generations,
-        fitness_type=FitnessType.Semantic,
+        fitness_type=FitnessType(fitness_type),
     )
 
     result, fittest_list = ga.start_evolution(debug)
